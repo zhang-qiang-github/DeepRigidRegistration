@@ -59,19 +59,23 @@ angle_tensor = tf.placeholder(dtype=tf.float32, shape=[None])
 
 x = one_conv_layer(input_img, kernal=[3,3], output_channal=32, name='a1')
 x = one_conv_layer(x, kernal=[3,3], output_channal=32, name='a2')
+x = tf.layers.batch_normalization(x, axis=3, training=True)
 pool1 = tf.nn.max_pool(x,ksize=[1,2,2,1],strides=[1,2,2,1],padding='SAME')
 
 x = one_conv_layer(pool1, kernal=[3,3], output_channal=64, name='b1')
 x = one_conv_layer(x, kernal=[3,3], output_channal=64, name='b2')
+x = tf.layers.batch_normalization(x, axis=3, training=True)
 pool2 = tf.nn.max_pool(x,ksize=[1,2,2,1],strides=[1,2,2,1],padding='SAME')
 
 x = one_conv_layer(pool2, kernal=[3,3], output_channal=128, name='c1')
 x = one_conv_layer(x, kernal=[3,3], output_channal=128, name='c2')
+x = tf.layers.batch_normalization(x, axis=3, training=True)
 pool3 = tf.nn.max_pool(x,ksize=[1,2,2,1],strides=[1,2,2,1],padding='SAME')
 
 x = one_conv_layer(pool3, kernal=[3,3], output_channal=256, name='d1')
 x = one_conv_layer(x, kernal=[3,3], output_channal=256, name='d2')
 x = one_conv_layer(x, kernal=[3,3], output_channal=256, name='d2')
+x = tf.layers.batch_normalization(x, axis=3, training=True)
 pool4 = tf.nn.max_pool(x,ksize=[1,2,2,1],strides=[1,2,2,1],padding='SAME')
 
 s = tf.layers.flatten(pool4)
@@ -80,13 +84,13 @@ N = int(s.shape[1])
 w1 = weight_variable(shape=[N,256],name='flatten1')
 b1 = bias_variable(shape=[256],name='flatten1')
 s1 = tf.matmul(s,w1)+b1
-s2 = tf.layers.batch_normalization(s1,axis=1)
+s2 = tf.layers.batch_normalization(s1,axis=1,training=True)
 s3 = tf.nn.relu(s2)
 
 w2 = weight_variable(shape=[256,64],name='flatten2')
 b2 = bias_variable(shape=[64],name='flatten2')
 s4 = tf.matmul(s3,w2)+b2
-s5 = tf.layers.batch_normalization(s4,axis=1)
+s5 = tf.layers.batch_normalization(s4,axis=1,training=True)
 s6 = tf.nn.relu(s5)
 
 w3 = weight_variable(shape=[64,1],name='flatten3')
